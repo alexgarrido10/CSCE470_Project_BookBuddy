@@ -1,6 +1,8 @@
 import requests
 from supabase import create_client, Client
 import os
+import re
+import spacy
 
 
 # Supabase setup
@@ -27,23 +29,48 @@ def get_books_by_genre(genre, start_index=0, max_results=40):
         print(f"Error fetching books for genre {genre}: {response.status_code}")
         return []
 
-# Add book data to Supabase
-def add_books_to_supabase(books):
+# Add book data to Supabase database
+def add_books_to_supabase(books, genre):
+    # Loading natural language processing kit (spaCy) for more complex processing
+    nlp = spacy.load("en_core_web_sm")
     for book in books:
+        # Initialize variables to hold json info
         volume_info = book.get('volumeInfo', {})
         title = volume_info.get('title', 'Unknown Title')
         authors = ', '.join(volume_info.get('authors', ['Unknown Author']))
         published_date = volume_info.get('publishedDate', 'Unknown')
-        categories = ', '.join(volume_info.get('categories', []))
+        categories = ', '.join(volume_info.get('categories', [genre]))
         description = volume_info.get('description', 'No description available.')
         page_count = volume_info.get('pageCount', 0)
 
-        # Prepare data to insert into Supabase
+        # Pre-processing the description
+        description = description.lower() # Make all words lower case
+        description = re.sub(r'\d+','',description) # Remove all digits 
+        description = re.sub(r'[^\w\s]','',description) # Remove punctuation
+        description = description.strip() # Remove all whitespace
+        descriptionDoc = nlp(description) # Turn description into spaCy doc object
+        # Remove all stop words from description and concatenate back into a string with spaces between tokens
+        description = " ".join([token.text for token in descriptionDoc if not token.is_stop])
+        # Description done
+
+        # Pre-process the genres
+        categories_normal = categories.lower()
+
+        # Pre-process the authors
+        authors_normal = authors.lower()
+
+        # Pre-process the title
+        title_normal = title.lower() 
+
+        # Prepare data to insert into Supabase database
         book_data = {
             "title": title,
+            "norm_title": title_normal,
             "authors": authors,
+            "norm_authors": authors_normal,
             "published_date": published_date,
             "categories": categories,
+            "norm_categories": categories_normal,
             "description": description,
             "page_count": page_count
         }
@@ -55,9 +82,18 @@ def add_books_to_supabase(books):
         else:
             print(f"Error adding book: {title}, Status Code: {response.status_code}")
 
+# Removes duplicate entries from Supabase database
+def remove_supabase_duplicates():
+    res = supabase.rpc('remove_duplicate_rows').execute()
+
+    if res.data:
+        print(f"Removed {res.data} duplicates")
+    else:
+        print(f"Error: {res.status}: {res.error}")
+
 # Main function to fetch and store books for different genres
 def main():
-    genres = ["Fiction", "Mystery", "Science Fiction", "Biography", "Fantasy", "History", "Romance"]
+    genres = ["Fiction", "Mystery", "Science Fiction", "Biography", "Fantasy", "History", "Romance", "Philosophy", "Self Help"]
     for genre in genres:
         print(f"Fetching books for genre: {genre}")
         maxBooks = 300
@@ -66,10 +102,13 @@ def main():
         while startIndex <= maxBooks:
             books = get_books_by_genre(genre, startIndex, min(maxResults, maxBooks - startIndex))
             if books:
-                add_books_to_supabase(books)
+                add_books_to_supabase(books, genre)
                 startIndex += 40
             else:
                 break
+
+    # Now delete all duplicate data in the database by calling custom function
+    remove_supabase_duplicates()
 
 if __name__ == "__main__":
     main()
