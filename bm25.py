@@ -4,6 +4,10 @@ import os
 import sys
 import argparse
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Supabase setup
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_API_KEY")
@@ -99,7 +103,7 @@ def main():
     }
 
     # Turn user query into list of terms
-    queryTerms = args.query.split()
+    queryTerms = args.query.lower().split()
 
     # Get the top 20 most relevant results based on BM25
     # for book in bookData[:25]:
