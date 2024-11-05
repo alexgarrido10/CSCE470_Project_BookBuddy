@@ -10,7 +10,7 @@ $ git clone git@github.com:alexgarrido10/CSCE470_Project_BookBuddy.git
 ```
 
 2. Set up a Python virtual environment
-The source code in this repository and the virtual environment it runs in was built with Python 3.12. No earlier versions have been tested. The packages may still be compatible, but use different versions at your own discretion
+The source code in this repository and the virtual environment it runs in was built with Python 3.12. No earlier versions have been tested. The packages may still be compatible, but use different versions at your own discretion (Note: The commands shown here are for unix shells; specifically bash. You may need to make some alterations based on your shell)
 ```console
 $ cd <path/to/BookBuddy/repo>
 $ python3 -m venv bookbuddy
