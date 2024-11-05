@@ -22,7 +22,7 @@ $ python -m spacy download en_core_web_sm
 ```
 
 3. Usage
-As the project continues, the repository of books being serached through will be expanded. For now, there are ~1,700 books in our database. 
+As the project continues, our database of books being serached through will be expanded. For now, there are ~1,700 books in our database. 
 > **Note:** Note: In pre-deployment, you need to have a copy of the .env file to access our supabase API key. Contact us to request access to this file.
 ```console
 $ python3 bm25.py "your query"
