@@ -20,7 +20,7 @@ $ python3 -m pip install -U pip
 $ pip install -r requirements10-29-24-6pm.txt
 $ python -m spacy download en_core_web_sm
 ```
-> **Note** 
+> **Note:** 
 Alternatively, you can run our setup shell script in macOS/bash interpreters
 However, if problems arise it might be easier to run each command separately to debug
 ```console
