@@ -16,7 +16,7 @@ $ cd <path/to/BookBuddy/repo>
 $ python3 -m venv bookbuddy
 $ source bookbuddy/bin/activate
 $ pip install -U pip
-$ pip install requirements10-29-24-6pm.txt
+$ pip install -r requirements10-29-24-6pm.txt
 ```
 
 3. Usage
