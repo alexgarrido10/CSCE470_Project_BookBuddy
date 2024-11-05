@@ -33,3 +33,21 @@ As the project continues, our database of books being serached through will be e
 ```console
 $ python3 bm25.py "your query"
 ```
+
+4. Backend Setup
+> **Note:** The backend is Flask (Python)
+```console
+$ cd /backend_book_buddy
+$ python3.12 -m venv backend_env
+$ source backend_env/bin/activate
+$ pip3 install flask
+$ pip install flask_cors
+$ python3.12 server.py # runs program
+
+view on browser my putting http://127.0.0.1:8080/api/home into url bar
+```
+5. Frontend Setup
+> **Note** The frontend is using Next.js (React)
+```console
+$ cd /frontend_book_buddy
+$ npm run dev

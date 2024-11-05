@@ -9,8 +9,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: "#D5B895", // Custom background color
+        foreground: "#43270F", // Custom foreground color
+      },
+      fontFamily: {
+        lora: ['Lora', 'serif'], // Define the Lora font
       },
     },
   },
