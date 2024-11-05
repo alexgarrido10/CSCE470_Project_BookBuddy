@@ -1,0 +1,22 @@
+create or replace function remove_duplicate_rows() returns
+int as $$
+declare 
+  numDeleted int := 0;
+begin
+  with duplicates as ( -- duplicates table with id from books and row_row num 
+  -- from window function
+    select id, -- ROW_NUMBER window function assigns row numbers starting at 1
+    -- to entries in partitions 
+    -- partition by title, authors groups unique title-author pairs
+      ROW_NUMBER() over (partition by title, authors order by id) as row_num
+    from books 
+  )
+  delete from books 
+  where id in (
+    select id from duplicates where row_num > 1 -- row_num > 1 means that there 
+    --was more than one title-author pair in that parition; aka duplicate
+  );
+
+  return 123;
+end;
+$$ language plpgsql volatile;
