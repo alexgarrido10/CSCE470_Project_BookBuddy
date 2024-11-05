@@ -23,7 +23,8 @@ $ python -m spacy download en_core_web_sm
 > **NoteL** 
 Alternatively, you can run our setup shell script.However, if problems arise it might be easier to run each command separately to debug.
 ```console
-source setupEnv.sh
+$ cd <path/to/BookBuddy/repo>
+$ source setupEnv.sh
 ```
 
 3. Usage
