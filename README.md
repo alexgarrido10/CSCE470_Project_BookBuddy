@@ -20,6 +20,11 @@ $ python3 -m pip install -U pip
 $ pip install -r requirements10-29-24-6pm.txt
 $ python -m spacy download en_core_web_sm
 ```
+> **Note** 
+Alternatively, you can run our shell script 
+```console
+source setupEnv.sh
+```
 
 3. Usage
 As the project continues, the repository of books being serached through will be expanded. For now, there are ~1,700 books in our database. 
