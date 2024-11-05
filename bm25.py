@@ -3,6 +3,7 @@ from supabase import create_client, Client
 import os
 import sys
 import argparse
+import re
 
 from dotenv import load_dotenv
 
@@ -102,8 +103,14 @@ def main():
         'description': sum(len(book['description'].split()) for book in bookData) / len(bookData)
     }
 
+    # Normalize user query
+    normQuery = args.query.lower()
+    normQuery = re.sub(r'\d+','',normQuery)
+    normQuery = re.sub(r'[^\w\s]','',normQuery)
+    normQuery = normQuery.strip()
+
     # Turn user query into list of terms
-    queryTerms = args.query.lower().split()
+    queryTerms = normQuery.split()
 
     # Get the top 20 most relevant results based on BM25
     # for book in bookData[:25]:
