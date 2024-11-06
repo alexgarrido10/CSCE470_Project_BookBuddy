@@ -55,12 +55,21 @@ def add_books_to_supabase(books, genre):
 
         # Pre-process the genres
         categories_normal = categories.lower()
+        categories_normal = re.sub(r'\d+', '', categories_normal)
+        categories_normal = re.sub(r'[^\w\s]', '', categories_normal)
+        categories_normal = categories_normal.strip()
 
         # Pre-process the authors
         authors_normal = authors.lower()
+        authors_normal = re.sub(r'\d+', '', authors_normal)
+        authors_normal = re.sub(r'[^\w\s]', '', authors_normal)
+        authors_normal = authors_normal.strip()
 
         # Pre-process the title
         title_normal = title.lower() 
+        title_normal = re.sub(r'\d+', '', title_normal)
+        title_normal = re.sub(r'[^\w\s]', '', title_normal)
+        title_normal = title_normal.strip()
 
         # Prepare data to insert into Supabase database
         book_data = {
@@ -96,7 +105,7 @@ def main():
     genres = ["Fiction", "Mystery", "Science Fiction", "Biography", "Fantasy", "History", "Romance", "Philosophy", "Self Help"]
     for genre in genres:
         print(f"Fetching books for genre: {genre}")
-        maxBooks = 300
+        maxBooks = 500
         startIndex = 0
         maxResults = 40
         while startIndex <= maxBooks:
