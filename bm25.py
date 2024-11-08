@@ -15,14 +15,14 @@ SUPABASE_KEY = os.getenv("SUPABASE_API_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Weights and parameters assigned to books' fields
-titleWeight = 0.5
-authorsWeight = 0.1
-descriptionWeight = 0.25
-genreWeight = 0.15
+titleWeight = 0.64
+authorsWeight = 0.4
+descriptionWeight = 0.35
+genreWeight = 0.35
 titleB = 0.75
 genreB = 0.75
 authorsB = 0.75
-descriptionB = 0.75
+descriptionB = 0.5
 
 # BM-25 hyperparameter K1
 k1 = 1.4
