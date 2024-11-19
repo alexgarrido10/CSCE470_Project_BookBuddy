@@ -1,9 +1,13 @@
 import requests
 from supabase import create_client, Client
+import textblob
 import os
 import re
 import spacy
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Supabase setup
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -71,6 +75,10 @@ def add_books_to_supabase(books, genre):
         title_normal = re.sub(r'[^\w\s]', '', title_normal)
         title_normal = title_normal.strip()
 
+        # Calculate sentiment score for document
+        tb = textblob.TextBlob(description)
+        sentiment_score = tb.sentiment[0]
+
         # Prepare data to insert into Supabase database
         book_data = {
             "title": title,
@@ -81,7 +89,8 @@ def add_books_to_supabase(books, genre):
             "categories": categories,
             "norm_categories": categories_normal,
             "description": description,
-            "page_count": page_count
+            "page_count": page_count,
+            "sentiment_score": sentiment_score
         }
 
         # Insert into Supabase
@@ -102,7 +111,8 @@ def remove_supabase_duplicates():
 
 # Main function to fetch and store books for different genres
 def main():
-    genres = ["Fiction", "Mystery", "Science Fiction", "Biography", "Fantasy", "History", "Romance", "Philosophy", "Self Help"]
+    genres = ["Fiction", "Mystery", "Science Fiction", "Biography", "Fantasy", "History", "Romance", "Philosophy", "Self Help", "Horror", 
+              "Drama", "Classic", "Comedy", "Alternate History"]
     for genre in genres:
         print(f"Fetching books for genre: {genre}")
         maxBooks = 500
