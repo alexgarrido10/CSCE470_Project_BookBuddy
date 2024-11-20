@@ -27,7 +27,7 @@ authorsB = 0.75
 descriptionB = 0.5
 
 # Non-textual sentiment feature weight; works more as a percentage of text vs non-text feature importance
-sentimentWeight = 0.3
+sentimentWeight = 0.5
 
 # BM-25 hyperparameter K1
 k1 = 1.4
@@ -50,7 +50,7 @@ def pull_books():
 
     while begin < totalRows:
         response = supabase.table('books').select('id, norm_title, norm_authors, norm_categories, description, '
-                    'sentiment_score, title', 
+                    'sentiment_score, title, authors', 
                     count='exact').range(begin, min(totalRows - 1, begin + pageSize -1)).execute()
 
         if not response.data:
@@ -110,19 +110,23 @@ def weighted_bm25(query, bookData, avLens, sentimentBias):
         
         # Adjustments 
         # Reward exact title match
-        # if " ".join(query) == book['norm_title']:
-        #     bookScore -= 1
+        if " ".join(query) == book['norm_title']:
+            bookScore -= 4
+
+        # Reward exact author match
+        if " ".join(query) == book['norm_authors']:
+            bookScore -= 4
 
         if sentimentBias != None:
             # Include sentiment scores
             alpha = 1
             # A higher alpha punishes less similar sentiments harder, lower alpha punishes less and thus rewards 
             # more similar sentiments less as well
-            sentimentFeature = math.exp(-alpha * abs(book['sentiment_score'] - sentimentBias))
+            sentimentFeature = math.exp(-alpha * abs(book['sentiment_score'] - sentimentBias)) * 2
             bookScore = (1 - sentimentWeight) * bookScore - sentimentFeature * sentimentWeight
 
         # Add the total doc score to scores
-        scores.append((book['id'], book['title'], bookScore))
+        scores.append((book['id'], book['title'], bookScore, book['authors']))
 
     return sorted(scores, key= lambda x: x[2])[:20]
 
@@ -166,7 +170,7 @@ def main():
 
     
     for ind, result in enumerate(top20,1): # Print out the top 20 ranked results
-        print(f"{ind}. {result[1]} - Score:{result[2]:.9f}")
+        print(f"{ind}. {result[1]}, by {result[3]} - Score:{result[2]:.9f}")
 
 if __name__ == "__main__":
     main()
