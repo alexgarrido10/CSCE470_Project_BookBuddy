@@ -49,8 +49,9 @@ def pull_books():
     begin = 0
 
     while begin < totalRows:
-        response = supabase.table('books').select('id, norm_title, norm_authors, norm_categories, description, sentiment_score', 
-                                                  count='exact').range(begin, min(totalRows - 1, begin + pageSize -1)).execute()
+        response = supabase.table('books').select('id, norm_title, norm_authors, norm_categories, description, '
+                    'sentiment_score, title', 
+                    count='exact').range(begin, min(totalRows - 1, begin + pageSize -1)).execute()
 
         if not response.data:
             break
@@ -121,7 +122,7 @@ def weighted_bm25(query, bookData, avLens, sentimentBias):
             bookScore = (1 - sentimentWeight) * bookScore - sentimentFeature * sentimentWeight
 
         # Add the total doc score to scores
-        scores.append((book['id'], book['norm_title'], bookScore))
+        scores.append((book['id'], book['title'], bookScore))
 
     return sorted(scores, key= lambda x: x[2])[:20]
 
