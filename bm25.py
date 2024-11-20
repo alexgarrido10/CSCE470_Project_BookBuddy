@@ -33,7 +33,7 @@ sentimentWeight = 0.5
 k1 = 1.4
 
 # List of generic terms to penalize generic titles
-# GENERIC_TERMS= {'fiction', 'fantasy', ''}
+GENERIC_TERMS= ['fiction', 'fantasy', 'mystery', 'horror']
 
 # def set_weights(slection):
     
@@ -116,6 +116,10 @@ def weighted_bm25(query, bookData, avLens, sentimentBias):
         # Reward exact author match
         if " ".join(query) == book['norm_authors']:
             bookScore -= 4
+
+        # Penalize titles with common genre words
+        if any(word in book['norm_title'] for word in GENERIC_TERMS):
+            bookScore += 2
 
         if sentimentBias != None:
             # Include sentiment scores
