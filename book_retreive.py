@@ -1,9 +1,13 @@
 import requests
 from supabase import create_client, Client
+import textblob
 import os
 import re
 import spacy
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Supabase setup
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -55,12 +59,25 @@ def add_books_to_supabase(books, genre):
 
         # Pre-process the genres
         categories_normal = categories.lower()
+        categories_normal = re.sub(r'\d+', '', categories_normal)
+        categories_normal = re.sub(r'[^\w\s]', '', categories_normal)
+        categories_normal = categories_normal.strip()
 
         # Pre-process the authors
         authors_normal = authors.lower()
+        authors_normal = re.sub(r'\d+', '', authors_normal)
+        authors_normal = re.sub(r'[^\w\s]', '', authors_normal)
+        authors_normal = authors_normal.strip()
 
         # Pre-process the title
         title_normal = title.lower() 
+        title_normal = re.sub(r'\d+', '', title_normal)
+        title_normal = re.sub(r'[^\w\s]', '', title_normal)
+        title_normal = title_normal.strip()
+
+        # Calculate sentiment score for document
+        tb = textblob.TextBlob(description)
+        sentiment_score = tb.sentiment[0]
 
         # Prepare data to insert into Supabase database
         book_data = {
@@ -72,7 +89,8 @@ def add_books_to_supabase(books, genre):
             "categories": categories,
             "norm_categories": categories_normal,
             "description": description,
-            "page_count": page_count
+            "page_count": page_count,
+            "sentiment_score": sentiment_score
         }
 
         # Insert into Supabase
@@ -93,10 +111,11 @@ def remove_supabase_duplicates():
 
 # Main function to fetch and store books for different genres
 def main():
-    genres = ["Fiction", "Mystery", "Science Fiction", "Biography", "Fantasy", "History", "Romance", "Philosophy", "Self Help"]
+    genres = ["Fiction", "Mystery", "Science Fiction", "Biography", "Fantasy", "History", "Romance", "Philosophy", "Self Help", "Horror", 
+              "Drama", "Classic", "Comedy", "Alternate History"]
     for genre in genres:
         print(f"Fetching books for genre: {genre}")
-        maxBooks = 300
+        maxBooks = 500
         startIndex = 0
         maxResults = 40
         while startIndex <= maxBooks:

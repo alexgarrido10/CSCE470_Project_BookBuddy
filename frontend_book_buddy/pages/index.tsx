@@ -1,12 +1,19 @@
-// frontend/pages/index.tsx
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/layout';
 import SearchBar from '../components/search_bar';
 import BookList from '../components/book_list';
 
+type Book = {
+  rank: number;
+  title: string;
+  score: string;
+};
+
+
 function Home() {
   const [message, setMessage] = useState("Loading");
-  const [searchResults, setSearchResults] = useState([]); // State for search results
+  // const [searchResults, setSearchResults] = useState([]); // State for search results
+  const [searchResults, setSearchResults] = useState<Book[]>([]); // State for search results
 
   useEffect(() => {
     fetch("http://localhost:8080/api/home")
